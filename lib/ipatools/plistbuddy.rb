@@ -21,6 +21,12 @@ module Ipatools
       self
     end
 
+    def add(key, type, value)
+      cmd({:cmd => :add, :key => key, :type => type, :value => value})
+      puts self.read key
+      self
+    end
+
     def delete(key)
       cmd({:cmd => :delete, :key => key})
       self
@@ -50,19 +56,16 @@ module Ipatools
           unless value_type
             raise(ArgumentError, ':value_type is a required key for :add command')
           end
-          allowed_value_types = ['string', 'bool', 'real', 'integer']
+          allowed_value_types = ['array', 'dict', 'string', 'bool', 'real', 'integer']
           unless allowed_value_types.include?(value_type)
             raise(ArgumentError, "expected '#{value_type}' to be one of '#{allowed_value_types}'")
           end
           value = args_hash[:value]
-          unless value
-            raise(ArgumentError, ':value is a required key for :add command')
-          end
           key = args_hash[:key]
           unless key
             raise(ArgumentError, ':key is a required key for :add command')
           end
-          return "\"Add :#{key} #{value_type} #{value}\""
+          return "\"Add #{key} #{value_type} #{value}\""
         when :set
           value = args_hash[:value]
           unless value
@@ -72,19 +75,19 @@ module Ipatools
           unless key
             raise(ArgumentError, ':key is a required key for :set command')
           end
-          return "\"Set :#{key} #{value}\""
+          return "\"Set #{key} #{value}\""
         when :print
           key = args_hash[:key]
           unless key
             raise(ArgumentError, ':key is a required key for :print command')
           end
-          return "\"Print :#{key}\""
+          return "\"Print #{key}\""
         when :delete
           key = args_hash[:key]
           unless key
             raise(ArgumentError, ':key is a required key for :delete command')
           end
-          return "\"Delete :#{key}\""
+          return "\"Delete #{key}\""
         else
           cmds = [:add, :set, :print, :delete]
           raise(ArgumentError, "expected '#{args_hash[:cmd]}' to be one of '#{cmds}'")
